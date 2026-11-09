@@ -228,7 +228,9 @@ if (producto.nombre.toLowerCase().includes("plátano")) {
     contenedorQR.className = "codigo-qr";
 
     // Preparar la información del producto
-    const informacionQR = "AgroCumaral - " + producto.nombre;
+   
+const informacionQR = "https://estebanbenavides8490-prog.github.io/AgroCumaral/#fichaDigital";
+
     // Generar el código QR
 generarCodigoQR(contenedorQR, informacionQR);
 

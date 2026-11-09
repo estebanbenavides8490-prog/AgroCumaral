@@ -229,7 +229,13 @@ if (producto.nombre.toLowerCase().includes("plátano")) {
 
     // Preparar la información del producto
    
-const informacionQR = "https://estebanbenavides8490-prog.github.io/AgroCumaral/#fichaDigital";
+
+const informacionQR = window.location.origin +
+    window.location.pathname +
+    "?producto=" +
+    encodeURIComponent(JSON.stringify(producto)) +
+    "#fichaDigital";
+
 
     // Generar el código QR
 generarCodigoQR(contenedorQR, informacionQR);
@@ -262,3 +268,31 @@ function generarCodigoQR(contenedor, informacion) {
     });
 
 }
+
+ // LEER PRODUCTO DESDE EL CÓDIGO QR
+ function cargarProductoDesdeQR() {
+     const parametros = new URLSearchParams(window.location.search);
+     const datosProducto = parametros.get("producto");
+
+     if (!datosProducto) return;
+
+     try {
+         const producto = JSON.parse(datosProducto);
+
+         if (
+             typeof producto.nombre !== "string" ||
+             typeof producto.categoria !== "string" ||
+             !Number.isFinite(producto.cantidad) ||
+             !Number.isFinite(producto.precio)
+         ) {
+             return;
+         }
+
+         mostrarFichaDigital(producto);
+     } catch (error) {
+         console.error("No se pudo leer el producto del QR:", error);
+     }
+ }
+
+ // Mostrar automáticamente la ficha al abrir el enlace
+ cargarProductoDesdeQR();

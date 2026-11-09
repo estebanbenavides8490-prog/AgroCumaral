@@ -69,7 +69,7 @@ function mostrarProductores() {
         return;
     }
 
-    productores.forEach(function(productor) {
+   productores.forEach(function(productor, indice) {
 
         const tarjeta = document.createElement("div");
         tarjeta.className = "producto";
@@ -86,8 +86,33 @@ function mostrarProductores() {
         tarjeta.appendChild(nombre);
         tarjeta.appendChild(ubicacion);
         tarjeta.appendChild(contacto);
+        
+const botonEliminar = document.createElement("button");
+botonEliminar.textContent = "Eliminar productor";
+botonEliminar.type = "button";
+
+botonEliminar.addEventListener("click", function() {
+    const confirmar = confirm(
+        "¿Estás seguro de que deseas eliminar este productor?"
+    );
+
+    if (confirmar) {
+        productores.splice(indice, 1);
+
+        localStorage.setItem(
+            "productores",
+            JSON.stringify(productores)
+        );
+
+        mostrarProductores();
+    }
+});
+
+tarjeta.appendChild(botonEliminar);
+
 
         lista.appendChild(tarjeta);
+
     });
 }
 

@@ -183,14 +183,24 @@ function mostrarProductos() {
         const tarjeta = document.createElement("div");
         tarjeta.className = "producto";
         
+
 const imagen = document.createElement("img");
 
-imagen.src = producto.nombre.toLowerCase().includes("plátano")
-    ? "imagenes/platano.jfif"
-    : "";
+const nombreProducto = producto.nombre.toLowerCase();
+
+if (nombreProducto.includes("plátano") || nombreProducto.includes("platano")) {
+    imagen.src = "imagenes/platano.jfif";
+} else if (nombreProducto.includes("naranja")) {
+    imagen.src = "imagenes/naranja.jpg";
+}
 
 imagen.alt = "Fotografía de " + producto.nombre;
 imagen.className = "imagen-producto";
+
+if (imagen.getAttribute("src")) {
+    tarjeta.appendChild(imagen);
+}
+
 
 if (imagen.src && producto.nombre.toLowerCase().includes("plátano")) {
     tarjeta.appendChild(imagen);

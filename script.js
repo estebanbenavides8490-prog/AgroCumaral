@@ -113,7 +113,7 @@ function mostrarProductos() {
         return;
     }
 
-    productos.forEach(function(producto) {
+  productos.forEach(function(producto, indice) {
 
         const tarjeta = document.createElement("div");
         tarjeta.className = "producto";
@@ -166,6 +166,21 @@ botonFicha.addEventListener("click", function() {
 });
 
 tarjeta.appendChild(botonFicha);
+
+const botonEliminar = document.createElement("button");
+
+botonEliminar.type = "button";
+botonEliminar.textContent = "Eliminar producto";
+
+botonEliminar.style.backgroundColor = "#c62828";
+botonEliminar.style.color = "white";
+botonEliminar.style.marginLeft = "10px";
+
+botonEliminar.addEventListener("click", function() {
+    eliminarProducto(indice);
+});
+
+tarjeta.appendChild(botonEliminar);
 
 
 
@@ -296,3 +311,27 @@ function generarCodigoQR(contenedor, informacion) {
 
  // Mostrar automáticamente la ficha al abrir el enlace
  cargarProductoDesdeQR();
+
+
+function eliminarProducto(indice) {
+    const confirmar = confirm(
+        "¿Estás seguro de que deseas eliminar este producto?"
+    );
+
+    if (!confirmar) {
+        return;
+    }
+
+    productos.splice(indice, 1);
+
+    localStorage.setItem(
+        "productos",
+        JSON.stringify(productos)
+    );
+
+    mostrarProductos();
+
+    document.getElementById("contenidoFicha").innerHTML = "";
+
+    alert("Producto eliminado correctamente.");
+}

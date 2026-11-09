@@ -52,7 +52,47 @@ formularioProductor.addEventListener("submit", function(event) {
         "¡Productor registrado correctamente!";
 
     formularioProductor.reset();
+    mostrarProductores();
 });
+// MOSTRAR PRODUCTORES REGISTRADOS
+
+function mostrarProductores() {
+
+    const lista = document.getElementById("listaProductores");
+
+    if (!lista) return;
+
+    lista.innerHTML = "";
+
+    if (productores.length === 0) {
+        lista.textContent = "No hay productores registrados.";
+        return;
+    }
+
+    productores.forEach(function(productor) {
+
+        const tarjeta = document.createElement("div");
+        tarjeta.className = "producto";
+
+        const nombre = document.createElement("h3");
+        nombre.textContent = productor.nombre;
+
+        const ubicacion = document.createElement("p");
+        ubicacion.textContent = "Ubicación: " + productor.ubicacion;
+
+        const contacto = document.createElement("p");
+        contacto.textContent = "Contacto: " + productor.contacto;
+
+        tarjeta.appendChild(nombre);
+        tarjeta.appendChild(ubicacion);
+        tarjeta.appendChild(contacto);
+
+        lista.appendChild(tarjeta);
+    });
+}
+
+// Mostrar productores al cargar la página
+mostrarProductores();
 
 // ======================================
 // PUBLICACION DE PRODUCTOS
@@ -335,3 +375,5 @@ function eliminarProducto(indice) {
 
     alert("Producto eliminado correctamente.");
 }
+// Mostrar productores guardados al abrir la página
+mostrarProductores();

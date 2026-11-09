@@ -1,0 +1,262 @@
+
+// ======================================
+// AGROCUMARAL - FUNCIONES PRINCIPALES
+// ======================================
+
+// Recuperar información guardada
+let productores = JSON.parse(
+    localStorage.getItem("productores")
+) || [];
+
+let productos = JSON.parse(
+    localStorage.getItem("productos")
+) || [];
+
+// Elementos de la aplicación
+const formularioProductor =
+    document.getElementById("formProductor");
+
+const formularioProducto =
+    document.getElementById("formProducto");
+
+// ======================================
+// REGISTRO DE PRODUCTORES
+// ======================================
+
+formularioProductor.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const nombre = document.getElementById("nombreProductor").value.trim();
+    const ubicacion = document.getElementById("ubicacion").value.trim();
+    const contacto = document.getElementById("contacto").value.trim();
+
+    if (!nombre || !ubicacion || !contacto) {
+        alert("Por favor completa todos los campos.");
+        return;
+    }
+
+    const productor = {
+        nombre: nombre,
+        ubicacion: ubicacion,
+        contacto: contacto
+    };
+
+    productores.push(productor);
+
+    localStorage.setItem(
+        "productores",
+        JSON.stringify(productores)
+    );
+
+    document.getElementById("mensajeProductor").textContent =
+        "¡Productor registrado correctamente!";
+
+    formularioProductor.reset();
+});
+
+// ======================================
+// PUBLICACION DE PRODUCTOS
+// ======================================
+
+formularioProducto.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const nombre = document.getElementById("nombreProducto").value.trim();
+    const categoria = document.getElementById("categoria").value.trim();
+    const cantidad = Number(document.getElementById("cantidad").value);
+    const precio = Number(document.getElementById("precio").value);
+    const fechaCosecha = document.getElementById("fechaCosecha").value;
+
+
+    if (!nombre || !categoria || cantidad <= 0 || precio <= 0) {
+        alert("Por favor ingresa datos válidos.");
+        return;
+    }
+
+    
+const producto = {
+    nombre: nombre,
+    categoria: categoria,
+    cantidad: cantidad,
+    precio: precio,
+    fechaCosecha: fechaCosecha
+};
+
+
+    productos.push(producto);
+
+    localStorage.setItem(
+        "productos",
+        JSON.stringify(productos)
+    );
+
+    document.getElementById("mensajePublicacion").textContent =
+        "¡Producto publicado correctamente!";
+
+    formularioProducto.reset();
+
+    mostrarProductos();
+});
+
+// ======================================
+// MOSTRAR CATALOGO AGRICOLA
+// ======================================
+
+function mostrarProductos() {
+
+    const lista = document.getElementById("listaProductos");
+
+    lista.innerHTML = "";
+
+    if (productos.length === 0) {
+        lista.textContent = "Aún no hay productos publicados.";
+        return;
+    }
+
+    productos.forEach(function(producto) {
+
+        const tarjeta = document.createElement("div");
+        tarjeta.className = "producto";
+        
+const imagen = document.createElement("img");
+
+imagen.src = producto.nombre.toLowerCase().includes("plátano")
+    ? "imagenes/platano.jfif"
+    : "";
+
+imagen.alt = "Fotografía de " + producto.nombre;
+imagen.className = "imagen-producto";
+
+if (imagen.src && producto.nombre.toLowerCase().includes("plátano")) {
+    tarjeta.appendChild(imagen);
+}
+
+
+        const titulo = document.createElement("h3");
+        titulo.textContent = producto.nombre;
+
+        const categoria = document.createElement("p");
+        categoria.textContent = "Categoría: " + producto.categoria;
+
+        const cantidad = document.createElement("p");
+        cantidad.textContent = "Cantidad: " + producto.cantidad + " kg";
+
+        const precio = document.createElement("p");
+        precio.textContent = "Precio: $" +
+            producto.precio.toLocaleString("es-CO") + " COP/kg";
+            
+const fecha = document.createElement("p");
+
+fecha.textContent = "Fecha de cosecha: " +
+    (producto.fechaCosecha || "No registrada");
+
+
+        tarjeta.appendChild(titulo);
+        tarjeta.appendChild(categoria);
+        tarjeta.appendChild(cantidad);
+        tarjeta.appendChild(precio);
+        tarjeta.appendChild(fecha);
+        
+const botonFicha = document.createElement("button");
+botonFicha.type = "button";
+botonFicha.textContent = "Ver ficha digital";
+
+botonFicha.addEventListener("click", function() {
+    mostrarFichaDigital(producto);
+});
+
+tarjeta.appendChild(botonFicha);
+
+
+
+        lista.appendChild(tarjeta);
+    });
+}
+
+// Mostrar productos guardados al abrir la aplicación
+mostrarProductos();
+
+
+ // ======================================
+ // FICHA DIGITAL DEL PRODUCTO
+ // ======================================
+
+function mostrarFichaDigital(producto) {
+
+    const ficha = document.getElementById("contenidoFicha");
+
+    ficha.innerHTML = "";
+
+    const titulo = document.createElement("h3");
+    titulo.textContent = producto.nombre;
+
+    const categoria = document.createElement("p");
+    categoria.textContent = "Categoría: " + producto.categoria;
+
+    const cantidad = document.createElement("p");
+    cantidad.textContent = "Cantidad disponible: " + producto.cantidad + " kg";
+
+    const precio = document.createElement("p");
+    precio.textContent = "Precio por kg: $" +
+        producto.precio.toLocaleString("es-CO") + " COP";
+
+    const fecha = document.createElement("p");
+    fecha.textContent = "Fecha de cosecha: " +
+        (producto.fechaCosecha || "No registrada");
+
+    ficha.appendChild(titulo);
+    ficha.appendChild(categoria);
+    ficha.appendChild(cantidad);
+    ficha.appendChild(precio);
+    ficha.appendChild(fecha);
+    // Mostrar fotografía en la ficha digital
+if (producto.nombre.toLowerCase().includes("plátano")) {
+
+    const imagenFicha = document.createElement("img");
+
+    imagenFicha.src = "imagenes/platano.jfif";
+
+    imagenFicha.alt = "Fotografía de " + producto.nombre;
+
+    imagenFicha.className = "imagen-producto";
+
+    ficha.appendChild(imagenFicha);
+}
+    
+    // Crear el contenedor del código QR
+    const contenedorQR = document.createElement("div");
+    contenedorQR.className = "codigo-qr";
+
+    // Preparar la información del producto
+    const informacionQR = "AgroCumaral - " + producto.nombre;
+    // Generar el código QR
+generarCodigoQR(contenedorQR, informacionQR);
+
+// Mostrar el QR en la ficha digital
+ficha.appendChild(contenedorQR);
+
+    document.getElementById("fichaDigital").scrollIntoView({
+        behavior: "smooth"
+    });
+}
+
+
+console.log("AgroCumaral está funcionando correctamente.");
+// =====================================
+// GENERACIÓN DE CÓDIGOS QR - AGROCUMARAL
+// =====================================
+
+function generarCodigoQR(contenedor, informacion) {
+
+    contenedor.innerHTML = "";
+
+    new QRCode(contenedor, {
+        text: informacion,
+        width: 180,
+        height: 180,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+       correctLevel: QRCode.CorrectLevel.L
+    });
+
+}

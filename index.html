@@ -1,0 +1,112 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroCumaral - Mercado Agrícola</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+    <header>
+        <h1>🌱 AgroCumaral</h1>
+        <p>Plataforma digital para productores agrícolas</p>
+    </header>
+
+    <nav>
+        <a href="#inicio">Inicio</a>
+        <a href="#productores">Productores</a>
+        <a href="#publicar">Publicar producto</a>
+        <a href="#catalogo">Catálogo</a>
+    </nav>
+
+    <main>
+        <section id="inicio">
+            <h2>Bienvenidos a AgroCumaral</h2>
+            <p>
+                Un espacio digital para conectar a los pequeños
+                productores agrícolas de Cumaral, Meta,
+                con compradores interesados en sus productos.
+            </p>
+        </section>
+
+        <section id="productores">
+            <h2>Registro de productores</h2>
+
+            <form id="formProductor">
+                <input type="text" id="nombreProductor"
+                    placeholder="Nombre del productor" required>
+
+                <input type="text" id="ubicacion"
+                    placeholder="Ubicación" required>
+
+                <input type="tel" id="contacto"
+                    placeholder="Número de contacto" required>
+
+                <button type="submit">Registrar productor</button>
+            </form>
+            <p id="mensajeProductor"></p>
+        </section>
+
+        <section id="publicar">
+            <h2>Publicar producto agrícola</h2>
+
+            <form id="formProducto">
+                <input type="text" id="nombreProducto"
+                    placeholder="Nombre del producto" required>
+
+                <input type="text" id="categoria"
+                    placeholder="Categoría agrícola" required>
+
+                <input type="number" id="cantidad"
+                    placeholder="Cantidad disponible (kg)"
+                    min="1" required>
+
+                <input type="number" id="precio"
+                    placeholder="Precio por kg (COP)"
+                    min="1" required>
+                    
+<label for="fechaCosecha">Fecha de cosecha:</label>
+<input
+    type="date"
+    id="fechaCosecha"
+    required
+>
+
+
+                <button type="submit">Publicar producto</button>
+            </form>
+           <p id="mensajePublicacion"></p>
+        </section>
+
+        <section id="catalogo">
+            <h2>Catálogo de productos</h2>
+            <div id="listaProductos">
+                <p>Aún no hay productos publicados.</p>
+            </div>
+        </section>
+        <!-- FICHA DIGITAL DEL PRODUCTO -->
+         <section id="fichaDigital">
+        <h2>Ficha digital del producto agrícola</h2>
+
+    <div id="contenidoFicha">
+        <p>
+            Selecciona un producto del catálogo
+            para consultar su información detallada.
+        </p>
+    </div>
+</section>
+
+    </main>
+
+    <footer>
+        <p>AgroCumaral - Proyecto de Ingeniería I</p>
+        <p>Cumaral, Meta - Colombia</p>
+    </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script src="script.js"></script>
+
+</body>
+</html>

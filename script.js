@@ -12,6 +12,29 @@ let productos = JSON.parse(
     localStorage.getItem("productos")
 ) || [];
 
+ 
+// ======================================
+// PRODUCTOS PUBLICOS DE DEMOSTRACION
+// ======================================
+
+const productosDemo = [
+    {
+        nombre: "Plátano hartón",
+        categoria: "Plátanos",
+        cantidad: 150,
+        precio: 2500,
+        fechaCosecha: "2026-11-09"
+    },
+    {
+        nombre: "Naranja",
+        categoria: "Cítricos",
+        cantidad: 100,
+        precio: 5000,
+        fechaCosecha: "2026-11-11"
+    }
+];
+
+
 // Elementos de la aplicación
 const formularioProductor =
     document.getElementById("formProductor");
@@ -169,16 +192,30 @@ const producto = {
 
 function mostrarProductos() {
 
+
     const lista = document.getElementById("listaProductos");
 
     lista.innerHTML = "";
 
-    if (productos.length === 0) {
-        lista.textContent = "Aún no hay productos publicados.";
-        return;
-    }
+    // Combinar productos públicos con productos locales
+    // sin repetir los productos de demostración
+    const productosVisibles = [
+        ...productosDemo,
+        ...productos.filter(function(productoLocal) {
+            return !productosDemo.some(function(demo) {
+                return productoLocal.nombre.trim().toLowerCase() ===
+                    demo.nombre.trim().toLowerCase();
+            });
+        })
+    ];
 
-  productos.forEach(function(producto, indice) {
+   
+if (productosVisibles.length === 0) {
+    lista.textContent = "Aún no hay productos publicados.";
+    return;
+}
+
+productosVisibles.forEach(function(producto, indice) {
 
         const tarjeta = document.createElement("div");
         tarjeta.className = "producto";
@@ -202,13 +239,6 @@ imagen.className = "imagen-producto";
 if (imagen.getAttribute("src")) {
     tarjeta.appendChild(imagen);
 }
-
-
-if (imagen.src && producto.nombre.toLowerCase().includes("plátano")) {
-    tarjeta.appendChild(imagen);
-}
-
-
         const titulo = document.createElement("h3");
         titulo.textContent = producto.nombre;
 
@@ -253,19 +283,31 @@ botonEliminar.style.backgroundColor = "#c62828";
 botonEliminar.style.color = "white";
 botonEliminar.style.marginLeft = "10px";
 
-botonEliminar.addEventListener("click", function() {
-    eliminarProducto(indice);
-});
 
-tarjeta.appendChild(botonEliminar);
+const esProductoDemo = productosDemo.includes(producto);
 
+if (!esProductoDemo) {
+    botonEliminar.addEventListener("click", function() {
+        const indiceLocal = productos.indexOf(producto);
 
-
-        lista.appendChild(tarjeta);
+        if (indiceLocal !== -1) {
+            eliminarProducto(indiceLocal);
+        }
     });
+
+ 
+    tarjeta.appendChild(botonEliminar);
 }
 
-// Mostrar productos guardados al abrir la aplicación
+// Agregar la tarjeta al catálogo
+lista.appendChild(tarjeta);
+
+
+}); // Cierra el forEach
+
+} // Cierra la función mostrarProductos
+
+// Mostrar productos al abrir la aplicación
 mostrarProductos();
 
 

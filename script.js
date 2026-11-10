@@ -308,9 +308,9 @@ if (nombreProducto.includes("plátano") || nombreProducto.includes("platano")) {
     imagen.src = "imagenes/platano.jfif";
 } else if (nombreProducto.includes("naranja")) {
     imagen.src = "imagenes/naranja.jfif";
+} else if (nombreProducto.includes("mango")) {
+    imagen.src = "imagenes/mango.jfif";
 }
-
-
 imagen.alt = "Fotografía de " + producto.nombre;
 imagen.className = "imagen-producto";
 
@@ -412,10 +412,9 @@ iniciarConsultaProductos();
  // FICHA DIGITAL DEL PRODUCTO
  // ======================================
 
+
 function mostrarFichaDigital(producto) {
-
     const ficha = document.getElementById("contenidoFicha");
-
     ficha.innerHTML = "";
 
     const titulo = document.createElement("h3");
@@ -429,7 +428,7 @@ function mostrarFichaDigital(producto) {
 
     const precio = document.createElement("p");
     precio.textContent = "Precio por kg: $" +
-        producto.precio.toLocaleString("es-CO") + " COP";
+        Number(producto.precio).toLocaleString("es-CO") + " COP";
 
     const fecha = document.createElement("p");
     fecha.textContent = "Fecha de cosecha: " +
@@ -441,56 +440,44 @@ function mostrarFichaDigital(producto) {
     ficha.appendChild(precio);
     ficha.appendChild(fecha);
 
-    // Mostrar fotografía en la ficha digital
-    const nombreProductoFicha = producto.nombre.toLowerCase();
+    // Fotografía del producto
+    const nombre = producto.nombre.toLowerCase();
+    const imagen = document.createElement("img");
 
-    const imagenFicha = document.createElement("img");
-
-    if (nombreProductoFicha.includes("plátano") ||
-        nombreProductoFicha.includes("platano")) {
-
-        imagenFicha.src = "imagenes/platano.jfif";
-
-    } else if (nombreProductoFicha.includes("naranja")) {
-
-        imagenFicha.src = "imagenes/naranja.jfif";
+    if (nombre.includes("plátano") || nombre.includes("platano")) {
+        imagen.src = "imagenes/platano.jfif";
+    } else if (nombre.includes("naranja")) {
+        imagen.src = "imagenes/naranja.jfif";
+    } else if (nombre.includes("mango")) {
+        imagen.src = "imagenes/mango.jfif";
     }
 
-    imagenFicha.alt = "Fotografía de " + producto.nombre;
-    imagenFicha.className = "imagen-producto";
+    imagen.alt = "Fotografía de " + producto.nombre;
+    imagen.className = "imagen-producto";
 
-    if (imagenFicha.getAttribute("src")) {
-        ficha.appendChild(imagenFicha);
+    if (imagen.getAttribute("src")) {
+        ficha.appendChild(imagen);
     }
 
-    
-    // Crear el contenedor del código QR
+    // Dirección pública de la ficha digital
+    const enlaceProducto =
+        "https://estebanbenavides8490-prog.github.io/AgroCumaral/" +
+        "?producto=" +
+        encodeURIComponent(JSON.stringify(producto)) +
+        "#fichaDigital";
+
+    // Generar código QR
     const contenedorQR = document.createElement("div");
     contenedorQR.className = "codigo-qr";
 
-    // Preparar la información del producto
-   
-
-const informacionQR = window.location.origin +
-    window.location.pathname +
-    "?producto=" +
-    encodeURIComponent(JSON.stringify(producto)) +
-    "#fichaDigital";
-
-
-    // Generar el código QR
-generarCodigoQR(contenedorQR, informacionQR);
-
-// Mostrar el QR en la ficha digital
-ficha.appendChild(contenedorQR);
+    generarCodigoQR(contenedorQR, enlaceProducto);
+    ficha.appendChild(contenedorQR);
 
     document.getElementById("fichaDigital").scrollIntoView({
         behavior: "smooth"
     });
 }
 
-
-console.log("AgroCumaral está funcionando correctamente.");
 // =====================================
 // GENERACIÓN DE CÓDIGOS QR - AGROCUMARAL
 // =====================================

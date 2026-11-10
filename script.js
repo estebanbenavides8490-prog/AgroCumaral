@@ -188,12 +188,13 @@ const imagen = document.createElement("img");
 
 const nombreProducto = producto.nombre.toLowerCase();
 
+
 if (nombreProducto.includes("plátano") || nombreProducto.includes("platano")) {
     imagen.src = "imagenes/platano.jfif";
-else if (nombreProducto.includes("naranja")) {
+} else if (nombreProducto.includes("naranja")) {
     imagen.src = "imagenes/naranja.jfif";
 }
-}
+
 
 imagen.alt = "Fotografía de " + producto.nombre;
 imagen.className = "imagen-producto";

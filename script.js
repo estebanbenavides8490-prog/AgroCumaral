@@ -12,6 +12,15 @@ let productos = JSON.parse(
     localStorage.getItem("productos")
 ) || [];
 
+const productoresPublicos = [
+    {
+        nombre: "Productor agrícola de demostración",
+        ubicacion: "Cumaral, Meta",
+        contacto: "Información de contacto no disponible"
+    }
+];
+
+
  
 // ======================================
 // PRODUCTOS PUBLICOS DE DEMOSTRACION
@@ -87,12 +96,19 @@ function mostrarProductores() {
 
     lista.innerHTML = "";
 
-    if (productores.length === 0) {
-        lista.textContent = "No hay productores registrados.";
-        return;
-    }
 
-   productores.forEach(function(productor, indice) {
+const productoresVisibles = [
+    ...productoresPublicos,
+    ...productores
+];
+
+if (productoresVisibles.length === 0) {
+    lista.textContent = "No hay productores registrados.";
+    return;
+}
+
+productoresVisibles.forEach(function(productor, indice) {
+
 
         const tarjeta = document.createElement("div");
         tarjeta.className = "producto";
@@ -120,8 +136,11 @@ botonEliminar.addEventListener("click", function() {
     );
 
     if (confirmar) {
-        productores.splice(indice, 1);
+       const indiceLocal = productores.indexOf(productor);
 
+if (indiceLocal !== -1) {
+    productores.splice(indiceLocal, 1);
+}
         localStorage.setItem(
             "productores",
             JSON.stringify(productores)
@@ -131,7 +150,13 @@ botonEliminar.addEventListener("click", function() {
     }
 });
 
-tarjeta.appendChild(botonEliminar);
+
+const esProductorPublico = productoresPublicos.includes(productor);
+
+if (!esProductorPublico) {
+    tarjeta.appendChild(botonEliminar);
+}
+
 
 
         lista.appendChild(tarjeta);

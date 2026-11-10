@@ -17,7 +17,7 @@ let productos = JSON.parse(
 // PRODUCTOS PUBLICOS DE DEMOSTRACION
 // ======================================
 
-const productosDemo = [
+const productosPublicos = [
     {
         nombre: "Plátano hartón",
         categoria: "Plátanos",
@@ -200,9 +200,9 @@ function mostrarProductos() {
     // Combinar productos públicos con productos locales
     // sin repetir los productos de demostración
     const productosVisibles = [
-        ...productosDemo,
+        ...productosPublicos,
         ...productos.filter(function(productoLocal) {
-            return !productosDemo.some(function(demo) {
+            return !productosPublicos.some(function(demo) {
                 return productoLocal.nombre.trim().toLowerCase() ===
                     demo.nombre.trim().toLowerCase();
             });
@@ -284,7 +284,7 @@ botonEliminar.style.color = "white";
 botonEliminar.style.marginLeft = "10px";
 
 
-const esProductoDemo = productosDemo.includes(producto);
+const esProductoDemo = productosPublicos.includes(producto);
 
 if (!esProductoDemo) {
     botonEliminar.addEventListener("click", function() {
@@ -412,6 +412,38 @@ function generarCodigoQR(contenedor, informacion) {
     });
 
 }
+
+ // ======================================
+ // ABRIR FICHA DIGITAL DESDE EL CODIGO QR
+ // ======================================
+
+function abrirFichaDesdeQR() {
+
+    const parametros = new URLSearchParams(window.location.search);
+
+    const productoQR = parametros.get("producto");
+
+    if (!productoQR) {
+        return;
+    }
+
+    try {
+        const producto = JSON.parse(productoQR);
+
+        if (!producto || typeof producto.nombre !== "string") {
+            return;
+        }
+
+        mostrarFichaDigital(producto);
+
+    } catch (error) {
+        console.error("Error al leer el producto del QR:", error);
+    }
+}
+
+// Ejecutar cuando la página termine de cargar
+window.addEventListener("load", abrirFichaDesdeQR);
+
 
  // LEER PRODUCTO DESDE EL CÓDIGO QR
  function cargarProductoDesdeQR() {

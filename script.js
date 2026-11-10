@@ -301,19 +301,29 @@ function mostrarFichaDigital(producto) {
     ficha.appendChild(cantidad);
     ficha.appendChild(precio);
     ficha.appendChild(fecha);
+
     // Mostrar fotografía en la ficha digital
-if (producto.nombre.toLowerCase().includes("plátano")) {
+    const nombreProductoFicha = producto.nombre.toLowerCase();
 
     const imagenFicha = document.createElement("img");
 
-    imagenFicha.src = "imagenes/platano.jfif";
+    if (nombreProductoFicha.includes("plátano") ||
+        nombreProductoFicha.includes("platano")) {
+
+        imagenFicha.src = "imagenes/platano.jfif";
+
+    } else if (nombreProductoFicha.includes("naranja")) {
+
+        imagenFicha.src = "imagenes/naranja.jfif";
+    }
 
     imagenFicha.alt = "Fotografía de " + producto.nombre;
-
     imagenFicha.className = "imagen-producto";
 
-    ficha.appendChild(imagenFicha);
-}
+    if (imagenFicha.getAttribute("src")) {
+        ficha.appendChild(imagenFicha);
+    }
+
     
     // Crear el contenedor del código QR
     const contenedorQR = document.createElement("div");

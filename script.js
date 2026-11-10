@@ -55,12 +55,16 @@ const formularioProducto =
 // REGISTRO DE PRODUCTORES
 // ======================================
 
-formularioProductor.addEventListener("submit", function(event) {
+
+formularioProductor.addEventListener("submit", async function(event) {
     event.preventDefault();
 
     const nombre = document.getElementById("nombreProductor").value.trim();
     const ubicacion = document.getElementById("ubicacion").value.trim();
     const contacto = document.getElementById("contacto").value.trim();
+
+    const mensaje = document.getElementById("mensajeProductor");
+    const boton = formularioProductor.querySelector('button[type="submit"]');
 
     if (!nombre || !ubicacion || !contacto) {
         alert("Por favor completa todos los campos.");
@@ -73,20 +77,33 @@ formularioProductor.addEventListener("submit", function(event) {
         contacto: contacto
     };
 
-    productores.push(productor);
+    boton.disabled = true;
+    mensaje.textContent = "Guardando productor en Firebase...";
 
-    localStorage.setItem(
-        "productores",
-        JSON.stringify(productores)
-    );
+    try {
+        if (typeof window.guardarProductorFirebase !== "function") {
+            throw new Error("Firebase todavía no está disponible.");
+        }
 
-    document.getElementById("mensajeProductor").textContent =
-        "¡Productor registrado correctamente!";
+        await window.guardarProductorFirebase(productor);
 
-    formularioProductor.reset();
-    mostrarProductores();
+        mensaje.textContent =
+            "¡Productor registrado correctamente en Firebase!";
+
+        formularioProductor.reset();
+
+    } catch (error) {
+        console.error("Error al registrar productor:", error);
+
+        mensaje.textContent =
+            "No se pudo guardar el productor. Intenta nuevamente.";
+    } finally {
+        boton.disabled = false;
+    }
 });
+
 // MOSTRAR PRODUCTORES REGISTRADOS
+let productoresFirebase = [];
 
 function mostrarProductores() {
 
@@ -97,9 +114,11 @@ function mostrarProductores() {
     lista.innerHTML = "";
 
 
+
 const productoresVisibles = [
     ...productoresPublicos,
-    ...productores
+    ...productores,
+    ...productoresFirebase
 ];
 
 if (productoresVisibles.length === 0) {
@@ -151,14 +170,12 @@ if (indiceLocal !== -1) {
 });
 
 
-const esProductorPublico = productoresPublicos.includes(productor);
 
-if (!esProductorPublico) {
+const esProductorLocal = productores.includes(productor);
+
+if (esProductorLocal) {
     tarjeta.appendChild(botonEliminar);
 }
-
-
-
         lista.appendChild(tarjeta);
 
     });
@@ -167,11 +184,30 @@ if (!esProductorPublico) {
 // Mostrar productores al cargar la página
 mostrarProductores();
 
+window.addEventListener(
+    "productoresFirebaseActualizados",
+    function(event) {
+        productoresFirebase = event.detail;
+        mostrarProductores();
+    }
+);
+
+function iniciarConsultaProductores() {
+    if (typeof window.escucharProductoresFirebase === "function") {
+        window.escucharProductoresFirebase();
+    } else {
+        setTimeout(iniciarConsultaProductores, 200);
+    }
+}
+
+iniciarConsultaProductores();
+
 // ======================================
 // PUBLICACION DE PRODUCTOS
 // ======================================
 
-formularioProducto.addEventListener("submit", function(event) {
+
+formularioProducto.addEventListener("submit", async function(event) {
     event.preventDefault();
 
     const nombre = document.getElementById("nombreProducto").value.trim();
@@ -180,41 +216,53 @@ formularioProducto.addEventListener("submit", function(event) {
     const precio = Number(document.getElementById("precio").value);
     const fechaCosecha = document.getElementById("fechaCosecha").value;
 
+    const mensaje = document.getElementById("mensajePublicacion");
+    const boton = formularioProducto.querySelector('button[type="submit"]');
 
-    if (!nombre || !categoria || cantidad <= 0 || precio <= 0) {
+    if (!nombre || !categoria || !fechaCosecha ||
+        !Number.isFinite(cantidad) || cantidad <= 0 ||
+        !Number.isFinite(precio) || precio <= 0) {
         alert("Por favor ingresa datos válidos.");
         return;
     }
 
-    
-const producto = {
-    nombre: nombre,
-    categoria: categoria,
-    cantidad: cantidad,
-    precio: precio,
-    fechaCosecha: fechaCosecha
-};
+    const producto = {
+        nombre: nombre,
+        categoria: categoria,
+        cantidad: cantidad,
+        precio: precio,
+        fechaCosecha: fechaCosecha
+    };
 
+    boton.disabled = true;
+    mensaje.textContent = "Publicando producto en Firebase...";
 
-    productos.push(producto);
+    try {
+        if (typeof window.guardarProductoFirebase !== "function") {
+            throw new Error("Firebase todavía no está disponible.");
+        }
 
-    localStorage.setItem(
-        "productos",
-        JSON.stringify(productos)
-    );
+        await window.guardarProductoFirebase(producto);
 
-    document.getElementById("mensajePublicacion").textContent =
-        "¡Producto publicado correctamente!";
+        mensaje.textContent =
+            "¡Producto publicado correctamente en Firebase!";
 
-    formularioProducto.reset();
+        formularioProducto.reset();
 
-    mostrarProductos();
+    } catch (error) {
+        console.error("Error al publicar producto:", error);
+
+        mensaje.textContent =
+            "No se pudo publicar el producto. Revisa la consola.";
+    } finally {
+        boton.disabled = false;
+    }
 });
 
 // ======================================
 // MOSTRAR CATALOGO AGRICOLA
 // ======================================
-
+let productosFirebase = [];
 function mostrarProductos() {
 
 
@@ -224,15 +272,20 @@ function mostrarProductos() {
 
     // Combinar productos públicos con productos locales
     // sin repetir los productos de demostración
-    const productosVisibles = [
-        ...productosPublicos,
-        ...productos.filter(function(productoLocal) {
-            return !productosPublicos.some(function(demo) {
-                return productoLocal.nombre.trim().toLowerCase() ===
-                    demo.nombre.trim().toLowerCase();
-            });
-        })
-    ];
+    
+const productosVisibles = [
+    ...productosPublicos,
+
+    ...productos.filter(function(productoLocal) {
+        return !productosPublicos.some(function(demo) {
+            return productoLocal.nombre.trim().toLowerCase() ===
+                demo.nombre.trim().toLowerCase();
+        });
+    }),
+
+    ...productosFirebase
+];
+
 
    
 if (productosVisibles.length === 0) {
@@ -309,9 +362,9 @@ botonEliminar.style.color = "white";
 botonEliminar.style.marginLeft = "10px";
 
 
-const esProductoDemo = productosPublicos.includes(producto);
+const esProductoLocal = productos.includes(producto);
 
-if (!esProductoDemo) {
+if (esProductoLocal) {
     botonEliminar.addEventListener("click", function() {
         const indiceLocal = productos.indexOf(producto);
 
@@ -334,6 +387,25 @@ lista.appendChild(tarjeta);
 
 // Mostrar productos al abrir la aplicación
 mostrarProductos();
+
+window.addEventListener(
+    "productosFirebaseActualizados",
+    function(event) {
+        productosFirebase = event.detail;
+        mostrarProductos();
+    }
+);
+
+function iniciarConsultaProductos() {
+    if (typeof window.escucharProductosFirebase === "function") {
+        window.escucharProductosFirebase();
+    } else {
+        setTimeout(iniciarConsultaProductos, 200);
+    }
+}
+
+iniciarConsultaProductos();
+
 
 
  // ======================================
